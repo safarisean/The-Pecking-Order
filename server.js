@@ -8,7 +8,12 @@ import { fileURLToPath } from 'node:url';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const cards=JSON.parse(fs.readFileSync(path.join(root,'cards.json')));
 const prompts=JSON.parse(fs.readFileSync(path.join(root,'prompts.json')));
-const app=express();app.use(express.static(path.join(root,'public')));app.get('/health',(_,res)=>res.json({ok:true,rooms:rooms.size}));
+const app=express();
+app.use(express.static(root));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(root, 'index.html'));
+});
+app.get('/health',(_,res)=>res.json({ok:true,rooms:rooms.size}));
 const http=createServer(app);const io=new Server(http,{cors:{origin:false}});const rooms=new Map();
 const random=()=>crypto.randomInt(0,1000000).toString().padStart(6,'0');
 const shuffle=a=>[...a].sort(()=>Math.random()-.5);
